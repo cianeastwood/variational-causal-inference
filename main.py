@@ -16,6 +16,11 @@ def parse_arguments():
     parser.add_argument("--artifact_path", type=str, required=True)
     parser.add_argument("--cpu", action="store_true")
     parser.add_argument("--gpu", default="0")
+    parser.add_argument("--use_wandb", action="store_true", help="Use Weights & Biases for logging (vs. TensorBoard)")
+    wandb = parser.add_argument_group('wandb')                          # arg_group currently ignored when converted to a dict...
+    wandb.add_argument("--entity", type=str, default="vci-team")        # team name on wandb
+    wandb.add_argument("--project", type=str, default="v1")             # project name on wandb
+    
 
     # model arguments
     parser.add_argument("--omega0", type=float, default=1.0, help="weight for individual-specific log-likelihood")

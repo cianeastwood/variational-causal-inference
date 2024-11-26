@@ -1,8 +1,5 @@
 #!/bin/bash
 
-eval "$(conda shell.bash hook)"
-conda activate vci-env
-
 DATA=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 PYARGS=""

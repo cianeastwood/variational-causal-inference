@@ -1,8 +1,5 @@
 #!/bin/bash
 
-eval "$(conda shell.bash hook)"
-conda activate vci-env
-
 DATA=$(cd -P -- "$(dirname -- "$0")" && pwd -P)
 
 PYARGS=""
@@ -21,7 +18,11 @@ PYARGS="$PYARGS --dist_mode discriminate"
 #PYARGS="$PYARGS --checkpoint_classifier /path/to/trained/classifier"
 
 PYARGS="$PYARGS --max_epochs 200"
-PYARGS="$PYARGS --batch_size 32"
+PYARGS="$PYARGS --batch_size 256"
 PYARGS="$PYARGS --checkpoint_freq 2"
+
+
+# Wandb
+PYARGS="$PYARGS --use_wandb"
 
 python main.py $PYARGS

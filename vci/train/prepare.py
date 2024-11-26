@@ -22,7 +22,9 @@ def prepare(args, state_dict=None, device="cuda"):
                 datasets["train"],
                 batch_size=args["batch_size"],
                 shuffle=True,
-                collate_fn=(lambda batch: data_collate(batch, nb_dims=datasets["train"].nb_dims))
+                collate_fn=(lambda batch: data_collate(batch, nb_dims=datasets["train"].nb_dims)),
+                num_workers=8,
+                pin_memory=True,
             )
         }
     )

@@ -5,6 +5,46 @@ import struct
 import logging
 
 import numpy as np
+from torch.utils.tensorboard import SummaryWriter
+import wandb
+
+
+class MyLogger:
+    """ Wrapper to allow logging to both console and visual logger (tensorboard or wandb) """
+    def __init__(self, config, log_dir, name=None, level='INFO', is_wandb=False):
+        initialize_logger(log_dir, name=name, level=level)  # initialize logger for printing via logging.info
+        self.is_wandb = is_wandb
+        self.visual_logger = wandb if self.is_wandb else SummaryWriter(log_dir=log_dir)
+        if is_wandb:
+            defaults = dict(
+                project=config["project"],
+                entity=config["entity"],
+                name=config["name"],
+                config=config,
+                dir=log_dir,
+            )
+            wandb.init(**defaults)
+        
+    def update(self, stats_dict, step, commit=False):
+        # First, print to console
+        logging.info(json.dumps(stats_dict))
+
+        # Then, log to visual logger
+        if self.is_wandb:
+            # wandb
+            wandb.log(stats_dict, commit=commit)
+        else:
+            # tensorboard
+            for key, val in stats_dict.items():
+                self.visual_logger.add_scalar(key, val, step)
+
+    def close(self):
+        if self.is_wandb:
+            wandb.finish()
+        else:
+            self.visual_logger.close()
+        logging.shutdown()
+
 
 def initialize_logger(artifact_path, name=None, level='INFO'):
     logfile = os.path.join(artifact_path, 'log.txt')

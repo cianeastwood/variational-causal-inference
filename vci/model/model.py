@@ -568,7 +568,7 @@ class VCI(nn.Module):
             "Fake Sample Loss": loss_fake.item()
         }
 
-    def update(self, batch, batch_idx=-1, writer=None):
+    def update(self, batch, batch_idx=-1, logger=None):
         outcomes, treatments, covariates, cf_treatments, cf_outcomes = batch
 
         loss_log = {}
@@ -588,8 +588,8 @@ class VCI(nn.Module):
                     self.d_opt.step()
 
                 loss_log.update(d_log)
-                if writer is not None:
-                    writer.add_scalar("Discriminator Grad Norm", d_grad_norm.item(), self.iteration)
+                if logger is not None:
+                    logger.update({"Discriminator Grad Norm": d_grad_norm.item()}, self.iteration)
 
         self.g_sch.step()
         g_loss, g_log = self.loss(outcomes, treatments, covariates, cf_treatments, cf_outcomes)
@@ -604,8 +604,8 @@ class VCI(nn.Module):
             self.g_opt.step()
 
         loss_log.update(g_log)
-        if writer is not None:
-            writer.add_scalar("Generator Grad Norm", g_grad_norm.item(), self.iteration)
+        if logger is not None:
+            logger.update({"Generator Grad Norm":  g_grad_norm.item()}, self.iteration)
 
         self.iteration += 1
 
